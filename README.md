@@ -1,4 +1,4 @@
-# data-loss-exploratory-analysis
+# Data Loss Exploratory Analysis
 
 ## Requirements
 - Python (3.7.10)
