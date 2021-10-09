@@ -12,3 +12,5 @@
 - Explore different types of data loss
   - Random
   - Pattern
+## Kaggle Jupyter Notebook
+https://www.kaggle.com/dillonmarquard/image-data-loss-exploratory-analysis/
