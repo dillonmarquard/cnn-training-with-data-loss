@@ -65,7 +65,7 @@ class DataAug:
 
     def rand_block(self, inputs:torch.Tensor, proportion:float=0.0, inject:bool=False) -> torch.Tensor:
         block_dim = (3,3)
-        num_loc = int(inputs.shape[2]*proportion)
+        num_loc = int(inputs.shape[2]*inputs.shape[3]*proportion/(block_dim[0]*block_dim[1]))
         to_rem_r = np.random.choice([x for x in range(inputs.shape[2])],size=num_loc,replace=False)
         to_rem_c = np.random.choice([x for x in range(inputs.shape[3])],size=num_loc,replace=False)
         mask = np.ones((inputs.shape[0],inputs.shape[1],inputs.shape[2],inputs.shape[3]))
