@@ -28,7 +28,7 @@ class BasicClassifier(nn.Module):
             nn.Linear(1024,num_classes),
             nn.Softmax(dim=0),            
         )
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x):
         x = self.features(x)
         x = torch.flatten(x, 1)
         x = self.classifier(x)

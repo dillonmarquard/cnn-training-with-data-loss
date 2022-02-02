@@ -1,5 +1,7 @@
 import torch
 import numpy as np
+import torch.nn as nn
+import matplotlib.pyplot as plt
 
 class Metrics:
     def __init__(self):
@@ -56,7 +58,7 @@ class Metrics:
         else:
             return stat
     
-    def feature_map(self,inputs: torch.Tensor,model,print_=False):
+    def feature_map(self,inputs: torch.Tensor,model,device,print_=False):
         no_of_layers=0
         conv_layers=[]
 

@@ -66,8 +66,8 @@ class DataAug:
     def rand_block(self, inputs:torch.Tensor, proportion:float=0.0, inject:bool=False) -> torch.Tensor:
         block_dim = (3,3)
         num_loc = int(inputs.shape[2]*inputs.shape[3]*proportion/(block_dim[0]*block_dim[1]))
-        to_rem_r = np.random.choice([x for x in range(inputs.shape[2])],size=num_loc,replace=False)
-        to_rem_c = np.random.choice([x for x in range(inputs.shape[3])],size=num_loc,replace=False)
+        to_rem_r = np.random.choice([x for x in range(inputs.shape[2])],size=num_loc,replace=True)
+        to_rem_c = np.random.choice([x for x in range(inputs.shape[3])],size=num_loc,replace=True)
         mask = np.ones((inputs.shape[0],inputs.shape[1],inputs.shape[2],inputs.shape[3]))
         for (row,col) in zip(to_rem_r,to_rem_c):
             mask[:,:,row:row+block_dim[0],col:col+block_dim[1]] = 0
@@ -75,7 +75,31 @@ class DataAug:
         if inject:
             lossyinputs += torch.Tensor(1-mask)*torch.rand((inputs.shape[0],inputs.shape[1],inputs.shape[2],inputs.shape[3]))
         return lossyinputs.type(torch.FloatTensor)
+
+    def comp_row_pixel(self, inputs:torch.Tensor, proportion:float=0.0, inject:bool=False) -> torch.Tensor:
+        lossyinputs = torch.clone(inputs)
+        lossyinputs = self.rand_pixel(lossyinputs,proportion,True) # augment data
+        lossyinputs = self.rand_row(lossyinputs,proportion,False) # remove data
+        return lossyinputs.type(torch.FloatTensor)
     
+    def comp_column_block(self, inputs:torch.Tensor, proportion:float=0.0, inject:bool=False) -> torch.Tensor:
+        lossyinputs = torch.clone(inputs)
+        lossyinputs = self.rand_block(lossyinputs,proportion,True) # augment data
+        lossyinputs = self.rand_column(lossyinputs,proportion,False) # remove data
+        return lossyinputs.type(torch.FloatTensor)
+    
+    def func_divider(self, inputs,proportion,funcs,func_proportions,inject):
+        func_num = np.ceil(func_proportions*inputs.shape[0]).astype(int)
+        lossyinputs = torch.clone(inputs)
+        h = 0
+        t = 0
+        for i, func in enumerate(funcs):
+            t += func_num[i]
+            lossyinputs[h:t] = funcs[func](lossyinputs[h:t],proportion,inject)
+            h += t
+        return lossyinputs
+
+    #################################################################################################################
     def pattern_column(self, inputs:torch.Tensor, proportion:float=0.0, inject:bool=False) -> torch.Tensor:
         if proportion > 1.0:
             proportion = 1.0
